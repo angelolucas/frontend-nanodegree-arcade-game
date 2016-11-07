@@ -1,3 +1,5 @@
+'use strict';
+
 // Enemies our player must avoid
 var Enemy = function() {
     // Variables applied to each of our instances go here,
@@ -27,9 +29,9 @@ Enemy.prototype.render = function() {
 var allEnemies = [];
 
 var Player = function(x, y) {
-    //console.log(ctx)
-    this.x = x;
-    this.y = y;
+    //console.log(game)
+    this.x = x * game.cellX;
+    this.y = y * game.cellY - 30;
     this.sprite = 'images/char-boy.png';
 }
 
@@ -38,19 +40,34 @@ Player.prototype.update = function() {
 }
 
 Player.prototype.render = function() {
-    ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
+    game.ctx.clearRect(0,0,9999,50);
+    game.ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
+    
 }
 
 Player.prototype.handleInput = function (keyPress) {
-    console.log(keyPress);
+    var width = game.cellX * (game.cols - 1);
+    var height = game.cellY * (game.cols - 1);
+
+    if (keyPress === 'up' && this.y >= 0)
+        this.y -= game.cellY;
+
+    else if (keyPress === 'down' && this.y < height)
+        this.y += game.cellY;
+
+    else if (keyPress === 'left' && this.x > 0)
+        this.x -= game.cellX;
+
+    else if (keyPress === 'right' && this.x < width)
+        this.x += game.cellX;
+    
 }
 
-var player = new Player(200, 300);
+var player = new Player(2, 4);
 
 // Now instantiate your objects.
 // Place all enemy objects in an array called allEnemies
 // Place the player object in a variable called player
-
 
 
 // This listens for key presses and sends the keys to your
@@ -62,6 +79,8 @@ document.addEventListener('keyup', function(e) {
         39: 'right',
         40: 'down'
     };
+
+
 
     if (allowedKeys[e.keyCode])
         player.handleInput(allowedKeys[e.keyCode]);
