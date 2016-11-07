@@ -24,7 +24,25 @@ Enemy.prototype.render = function() {
 // Now write your own player class
 // This class requires an update(), render() and
 // a handleInput() method.
+var allEnemies = [];
 
+var Player = function() {
+    this.sprite = 'images/char-boy.png';
+}
+
+Player.prototype.update = function() {
+
+}
+
+Player.prototype.render = function() {
+
+}
+
+Player.prototype.handleInput = function (keyPress) {
+    console.log(keyPress);
+}
+
+var player = new Player;
 
 // Now instantiate your objects.
 // Place all enemy objects in an array called allEnemies
@@ -42,5 +60,9 @@ document.addEventListener('keyup', function(e) {
         40: 'down'
     };
 
-    player.handleInput(allowedKeys[e.keyCode]);
+    if (allowedKeys[e.keyCode])
+        player.handleInput(allowedKeys[e.keyCode]);
+    else
+        return false;
+
 });
