@@ -1,10 +1,12 @@
 'use strict';
 
 // Enemies our player must avoid
-var Enemy = function() {
+var Enemy = function(x, y) {
     // Variables applied to each of our instances go here,
     // we've provided one for you to get started
-
+    console.log('Enemy Class');
+    this.x = x * game.cellX;
+    this.y = y * game.cellY - 24;
     // The image/sprite for our enemies, this uses
     // a helper we've provided to easily load images
     this.sprite = 'images/enemy-bug.png';
@@ -20,16 +22,19 @@ Enemy.prototype.update = function(dt) {
 
 // Draw the enemy on the screen, required method for game
 Enemy.prototype.render = function() {
-    ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
+    game.ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
+    var speed = Math.random() * 2;
+    this.x += 0.5 + speed;
+
+    if(this.x > game.cellX * game.cols) {
+        this.x = -game.cellX;
+    }
 };
 
 // Now write your own player class
 // This class requires an update(), render() and
 // a handleInput() method.
-var allEnemies = [];
-
 var Player = function(x, y) {
-    //console.log(game)
     this.x = x * game.cellX;
     this.y = y * game.cellY - 30;
     this.sprite = 'images/char-boy.png';
@@ -42,14 +47,13 @@ Player.prototype.update = function() {
 Player.prototype.render = function() {
     game.ctx.clearRect(0,0,9999,50);
     game.ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
-    
 }
 
 Player.prototype.handleInput = function (keyPress) {
     var width = game.cellX * (game.cols - 1);
-    var height = game.cellY * (game.cols - 1);
+    var height = game.cellY * (game.rows - 2);
 
-    if (keyPress === 'up' && this.y >= 0)
+    if (keyPress === 'up' && this.y > 0)
         this.y -= game.cellY;
 
     else if (keyPress === 'down' && this.y < height)
@@ -60,14 +64,21 @@ Player.prototype.handleInput = function (keyPress) {
 
     else if (keyPress === 'right' && this.x < width)
         this.x += game.cellX;
-    
 }
-
-var player = new Player(2, 4);
 
 // Now instantiate your objects.
 // Place all enemy objects in an array called allEnemies
 // Place the player object in a variable called player
+var player = new Player(3, 4);
+
+var allEnemies = [];
+
+for (var i = 0; i < game.cols; i++) {
+    var path = Math.floor(Math.random() * 3 + 1);
+
+    var enemy = new Enemy(-1, path);
+    allEnemies.push(enemy);
+}
 
 
 // This listens for key presses and sends the keys to your
@@ -79,8 +90,6 @@ document.addEventListener('keyup', function(e) {
         39: 'right',
         40: 'down'
     };
-
-
 
     if (allowedKeys[e.keyCode])
         player.handleInput(allowedKeys[e.keyCode]);

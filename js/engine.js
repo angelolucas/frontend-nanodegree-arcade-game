@@ -25,14 +25,14 @@ var Engine = (function(global) {
         ctx = canvas.getContext('2d'),
         lastTime;
 
-    /* Object Game 
-    *  global variables */
-    var game = {};
-    game.ctx = ctx;
-    game.cellX = 101;
-    game.cellY = 84;
-    game.cols = 5;
-    game.rows = 6;
+    /* Global game variables */
+    var game = {
+        ctx: ctx,
+        cellX: 101,
+        cellY: 84,
+        cols: 7,
+        rows: 6
+    };
 
     canvas.width = game.cols * game.cellX;
     canvas.height = game.rows * game.cellY + 87;
