@@ -1,8 +1,5 @@
 'use strict';
 
-// Global variables
-
-
 // Enemies our player must avoid
 var Enemy = function() {
     // Variables applied to each of our instances go here,
@@ -14,7 +11,7 @@ var Enemy = function() {
     this.sprite = 'images/enemy-bug.png';
 };
 
-// Update the enemy's position, required method for game
+// Update the enemy's position, required method for game 
 // Parameter: dt, a time delta between ticks
 Enemy.prototype.update = function(dt) {
     // You should multiply any movement by the dt parameter
@@ -22,7 +19,7 @@ Enemy.prototype.update = function(dt) {
     // all computers.
     
     var speed = Math.random() * 2;
-    this.x += (dt * 50) + speed;
+    this.x += (dt * 100) + speed;
 
     // If enemy has already crossed the path
     // put back at the beginning
@@ -35,7 +32,7 @@ Enemy.prototype.update = function(dt) {
     if(this.y === player.y
        && this.x + 70 > player.x
        && this.x < player.x + 70) {
-
+        
         player.x = player.initX;
         player.y = player.initY;
     }
@@ -58,7 +55,7 @@ var Player = function(x, y) {
 }
 
 Player.prototype.update = function() {
-
+    
 }
 
 Player.prototype.render = function() {
@@ -67,11 +64,19 @@ Player.prototype.render = function() {
 }
 
 Player.prototype.handleInput = function (keyPress) {
+
     var width = game.cellX * (game.cols - 1);
     var height = game.cellY * (game.rows - 2);
 
-    if (keyPress === 'up' && this.y > 0)
+    if (keyPress === 'up'){
         this.y -= game.cellY;
+
+        // check if player won
+        if ( this.y === -(game.cellY + 24) ) {
+            player.x = player.initX;
+            player.y = player.initY;
+        }
+    }
 
     else if (keyPress === 'down' && this.y < height)
         this.y += game.cellY;
@@ -82,7 +87,6 @@ Player.prototype.handleInput = function (keyPress) {
     else if (keyPress === 'right' && this.x < width)
         this.x += game.cellX;
 
-
 }
 
 // Now instantiate your objects.
@@ -92,22 +96,13 @@ var player = new Player(3, 5);
 
 var allEnemies = [];
 
-for (var i = 0; i < game.cols; i++) {
+for (var i = 0; i < 6; i++) {
     setTimeout(function() {
         var enemy = new Enemy();
 
         allEnemies.push(enemy);
     }, i * 1100)
 }
-
-// Check collisions
-var checkCollisions = function () {
-    var playerPath;
-    var playerPosition;
-    var enemiesPosition; 
-}
-
-
 
 // This listens for key presses and sends the keys to your
 // Player.handleInput() method. You don't need to modify this.
