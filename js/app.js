@@ -1,11 +1,18 @@
 'use strict';
 
+// Player and Enemies Points
+var points = {
+    player: 0,
+    enemy: 0
+};
+
 // Enemies our player must avoid
 var Enemy = function() {
     // Variables applied to each of our instances go here,
     // we've provided one for you to get started
     this.x = -game.cellX;
     this.y = Math.floor(Math.random() * 3 + 1) * game.cellY - 24;
+    
     // The image/sprite for our enemies, this uses
     // a helper we've provided to easily load images
     this.sprite = 'images/enemy-bug.png';
@@ -17,7 +24,7 @@ Enemy.prototype.update = function(dt) {
     // You should multiply any movement by the dt parameter
     // which will ensure the game runs at the same speed for
     // all computers.
-    
+
     var speed = Math.random() * 2;
     this.x += (dt * 100) + speed;
 
@@ -29,18 +36,32 @@ Enemy.prototype.update = function(dt) {
     }
     
     // Check collision
-    if(this.y === player.y
-       && this.x + 70 > player.x
-       && this.x < player.x + 70) {
-        
+    var positionSameLine = this.y === player.y,
+        rangeRightCollision = this.x + 70 > player.x,
+        rangeLeftCollision = this.x < player.x + 70;
+
+    if(positionSameLine && rangeRightCollision && rangeLeftCollision) {
         player.x = player.initX;
         player.y = player.initY;
+        points.enemy += 1;
+        console.log(points.enemy)
     }
 };
 
 // Draw the enemy on the screen, required method for game
 Enemy.prototype.render = function() {
+    /* Draw Enemy */
     game.ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
+        
+    /* Draw Enemy Points */
+    game.ctx.fillStyle = "#FFF";
+    game.ctx.font = "bold 38px Impact";
+    game.ctx.strokeStyle = "#c43d0b";
+    game.ctx.lineWidth = 2;
+    game.ctx.textAlign = "right";
+    game.ctx.miterLimit = 1;
+    game.ctx.fillText('Enemy: ' + points.enemy, (game.cols * game.cellX) - 20, 105);
+    game.ctx.strokeText('Enemy: ' + points.enemy, (game.cols * game.cellX) - 20, 105);
 };
 
 // Now write your own player class
@@ -51,6 +72,7 @@ var Player = function(x, y) {
     this.y = y * game.cellY - 24;
     this.initX = this.x;
     this.initY = this.y;
+    this.victories = 0;
     this.sprite = 'images/char-boy.png';
 }
 
@@ -59,8 +81,14 @@ Player.prototype.update = function() {
 }
 
 Player.prototype.render = function() {
-    game.ctx.clearRect(0,0,9999,50);
+    /* Draw Player */
     game.ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
+
+    /* Draw Player Points */
+    game.ctx.strokeStyle = "#4e66d2";
+    game.ctx.textAlign = "left";
+    game.ctx.fillText('You: ' + points.player, 20, 105);
+    game.ctx.strokeText('You: ' + points.player, 20, 105);
 }
 
 Player.prototype.handleInput = function (keyPress) {
@@ -71,10 +99,13 @@ Player.prototype.handleInput = function (keyPress) {
     if (keyPress === 'up'){
         this.y -= game.cellY;
 
+        player.render('test')
+
         // check if player won
-        if ( this.y === -(game.cellY + 24) ) {
+        if ( this.y <= 0 ) {
             player.x = player.initX;
             player.y = player.initY;
+            points.player += 1;
         }
     }
 
